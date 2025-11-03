@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Avalonia.Animation;
-using Avalonia.Collections;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Reactive;
 
 namespace Avalonia.Notification.Controls
@@ -104,13 +101,17 @@ namespace Avalonia.Notification.Controls
                 throw new InvalidOperationException(
                     "Can't use both ItemsSource and Items collection at the same time.");*/
 
-            (this.Items).Add(args.Message);
-
-            if (args.Message is INotificationAnimation animatableMessage)
+            // Check if the message is already in the collection to prevent "control already has a visual parent" error
+            if (!this.Items.Contains(args.Message))
             {
-                if (animatableMessage.Animates)
+                (this.Items).Add(args.Message);
+
+                if (args.Message is INotificationAnimation animatableMessage)
                 {
-                    animatableMessage.AnimatableElement.StartAnimation = true;
+                    if (animatableMessage.Animates)
+                    {
+                        animatableMessage.AnimatableElement.StartAnimation = true;
+                    }
                 }
             }
         }
